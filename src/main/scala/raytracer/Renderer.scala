@@ -1,23 +1,28 @@
 package raytracer
 
-import raytracer.Helpers.Crossable
+import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.color.{Color, RGBColor, X11Colorlist}
+import com.sksamuel.scrimage.pixels.Pixel
 
 object Renderer {
-  type Color = (Float, Float, Float)
   type Vert = (Float, Float, Float)
   type Point = (Float, Float, Float)
   type Vector3 = (Float, Float, Float)
   type Face = (Int, Int, Int)
 
-  def render(scene: Scene, renderSettings: RenderSettings): List[List[Color]] = {
-    val pixels = 1.to(renderSettings.height) cross 1.to(renderSettings.width)
+  def render(scene: Scene, renderSettings: RenderSettings): ImmutableImage = {
+    val pixels: Array[Pixel] = 0.until(renderSettings.height).toArray.flatMap(x => {
+      0.until(renderSettings.width).toArray.map(y => {
+        val ray = Ray(new Point(x, y, 0), new Vector3(0, 0, 1))
+        val color = trace(ray)
+        color.toPixel(x, y)
+      })
+    })
 
-    pixels.foreach({ case (x, y) => {
-      println((x, y))
-    }})
+    ImmutableImage.create(renderSettings.width, renderSettings.height, pixels)
+  }
 
-    println(s"Pixels count: ${pixels.size}")
-
-    List.empty
+  def trace(ray: Ray): Color = {
+    X11Colorlist.Black
   }
 }
