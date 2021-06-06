@@ -1,5 +1,5 @@
 package raytracer
 
-import raytracer.Renderer.{Point, Vector3}
+import breeze.linalg.DenseVector
 
-case class Ray(start: Point, dir: Vector3)
+case class Ray(start: DenseVector[Float], dir: DenseVector[Float])

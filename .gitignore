@@ -125,3 +125,5 @@ project/plugins/project/
 *.log
 
 # End of https://www.toptal.com/developers/gitignore/api/sbt,scala,intellij
+
+render.jpg
