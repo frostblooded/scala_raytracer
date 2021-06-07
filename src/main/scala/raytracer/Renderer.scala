@@ -1,30 +1,28 @@
 package raytracer
 
-import breeze.linalg.DenseVector
+import breeze.linalg.{DenseVector, normalize}
 import com.sksamuel.scrimage.ImmutableImage
-import com.sksamuel.scrimage.color.{Color, RGBColor, X11Colorlist}
 import com.sksamuel.scrimage.pixels.Pixel
-import raytracer.Renderer.Vector3
 
-class Renderer(scene: Scene, renderSettings: RenderSettings) {
-  def render: ImmutableImage = {
+object Renderer {
+  type Vector3 = DenseVector[Double]
+  type Face = (Int, Int, Int)
+
+  def renderSettings: RenderSettings = RenderSettings(400, 300)
+
+  def render(scene: Scene): ImmutableImage = {
+    val focalLength = 10
+
     val pixels: Array[Pixel] = 0.until(renderSettings.height).toArray.flatMap(y => {
       0.until(renderSettings.width).toArray.map(x => {
-        val ray = Ray(DenseVector[Float](x, y, 0), DenseVector(0, 0, 1))
-        val color = trace(ray)
+        val origin = DenseVector[Double](0, 0, 0)
+        val dir = normalize(DenseVector[Double](x, y, focalLength))
+        val ray = Ray(origin, dir, 0)
+        val color = scene.trace(ray)
         color.toPixel(x, y)
       })
     })
 
     ImmutableImage.create(renderSettings.width, renderSettings.height, pixels)
   }
-
-  def trace(ray: Ray): Color = {
-    scene.intersect(ray).map(_.material).getOrElse(X11Colorlist.Purple)
-  }
-}
-
-object Renderer {
-  type Vector3 = DenseVector[Float]
-  type Face = (Int, Int, Int)
 }
