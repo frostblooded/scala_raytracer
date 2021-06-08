@@ -1,21 +1,31 @@
 package raytracer
 
-import breeze.linalg.Matrix.castOps
 import breeze.linalg.{DenseVector, cross, norm, normalize}
-import com.sksamuel.scrimage.color.{Color, RGBColor, X11Colorlist}
+import com.sksamuel.scrimage.color.{Color, X11Colorlist}
 import raytracer.Renderer.{Face, Vector3}
 
-case class SceneObject(name: String, verts: List[Vector3], faces: List[Face]) {
+case class SceneObject(
+  name: String,
+  verts: List[Vector3],
+  faces: List[Face],
+  color: Color
+) {
   def material: Color = {
-    X11Colorlist.Pink
+    color
   }
 
-  def shade(hitInfo: HitInfo): Color = {
-    val maxDepth = 5
+  def shade(scene: Scene, hitInfo: HitInfo): Color = {
+    val maxDepth = 4
 
     if(hitInfo.ray.depth >= maxDepth) return material
 
-    material
+    val newRayId = hitInfo.ray.id
+    val newRayOrigin = hitInfo.point
+    val newRayDir = normalize(Helpers.randomInUnitSphere + hitInfo.normal)
+    val newRayDepth = hitInfo.ray.depth + 1
+    val newRay = Ray(newRayId, newRayOrigin, newRayDir, newRayDepth)
+
+    Helpers.multiplyColors(material, scene.trace(newRay))
   }
 
   def intersect(ray: Ray): Option[HitInfo] = {
@@ -80,13 +90,13 @@ case class SceneObject(name: String, verts: List[Vector3], faces: List[Face]) {
     val w = 1 - u - v
     val hitPoint = u * v0 + v * v1 + w * v2
 
-    Some(HitInfo(ray, this, hitPoint))
+    Some(HitInfo(ray, this, hitPoint, N))
   }
 }
 
 object SceneObject {
-  def apply(name: String)(verts: (Double, Double, Double)*)(faces: Face*): SceneObject = {
+  def apply(name: String, color: Color)(verts: (Double, Double, Double)*)(faces: Face*): SceneObject = {
     val denseVerts = verts.map(x => DenseVector[Double](x._1, x._2, x._3)).toList
-    new SceneObject(name, denseVerts, faces.toList)
+    new SceneObject(name, denseVerts, faces.toList, color)
   }
 }

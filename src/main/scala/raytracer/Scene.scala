@@ -10,7 +10,11 @@ case class Scene(objects: List[SceneObject]) {
 
   def trace(ray: Ray): Color = {
     intersect(ray)
-      .map(info => info.obj.shade(info))
+      .map(info => {
+        println(s"Ray ${ray.id} hits ${info.obj.name} at depth ${info.ray.depth}")
+        info
+      })
+      .map(info => info.obj.shade(this, info))
       .getOrElse(X11Colorlist.Purple)
   }
 
