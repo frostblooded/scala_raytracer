@@ -19,38 +19,32 @@ case class SceneObject(
 
     if(hitInfo.ray.depth >= maxDepth) return material
 
-    if(hitInfo.ray.depth >= 1 || hitInfo.obj.name == "Object 2") {
-      val a = 1
-    }
-
-    val newRayId = hitInfo.ray.id
     val r = Helpers.randomInUnitSphere
     val newRayDir = normalize(r + hitInfo.normal)
     val newRayDepth = hitInfo.ray.depth + 1
     val newRayOrigin = hitInfo.point + newRayDir * 0.01
-    val newRay = Ray(newRayId, newRayOrigin, newRayDir, newRayDepth)
+    val newRay = Ray(newRayOrigin, newRayDir, newRayDepth)
 
     Helpers.multiplyColors(material, scene.trace(newRay))
   }
 
-  def intersect(ray: Ray): Option[HitInfo] = {
-    var closestInfo: Option[HitInfo] = None
-    var closestT = Double.MaxValue
+  def intersect(ray: Ray, closestOnStart: Option[HitInfo]): Option[HitInfo] = {
+    var closestHit = closestOnStart
 
-    faces.foreach(f => {
-      val hitInfo = intersectFace(ray, f)
-
-      hitInfo match {
-        case Some(info) =>
-          if(closestT > info.t) {
-            closestInfo = Some(info)
-            closestT = info.t
+    faces.foreach(f =>
+      intersectFace(ray, f) match {
+        case Some(hit) =>
+          closestHit match {
+            case Some(closest) =>
+              if (closest.t > hit.t) closestHit = Some(hit)
+            case None =>
+              closestHit = Some(hit)
           }
         case None => ()
       }
-    })
+    )
 
-    closestInfo
+    closestHit
   }
 
   // Algorithm comes from https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution#:~:text=The%20ray%20can%20intersect%20the,these%20two%20vectors%20is%200)

@@ -11,7 +11,7 @@ case class Scene(objects: List[SceneObject]) {
   def trace(ray: Ray): Color = {
     intersect(ray)
       .map(info => {
-        println(s"Ray ${ray.id} hits ${info.obj.name} at depth ${info.ray.depth}")
+        // println(s"Hit ${info.obj.name} at depth ${info.ray.depth}")
         info
       })
       .map(info => info.obj.shade(this, info))
@@ -20,20 +20,19 @@ case class Scene(objects: List[SceneObject]) {
 
   def intersect(ray: Ray): Option[HitInfo] = {
     var closestHit: Option[HitInfo] = None
-    var closestT = Double.MaxValue
 
-    objects.foreach(obj => {
-      val hitInfo = obj.intersect(ray)
-
-      hitInfo match {
-        case Some(info) =>
-          if(closestT > info.t) {
-            closestHit = Some(info)
-            closestT = info.t
+    objects.foreach(obj =>
+      obj.intersect(ray, closestHit) match {
+        case Some(hit) =>
+          closestHit match {
+            case Some(closest) =>
+              if (closest.t > hit.t) closestHit = Some(hit)
+            case None =>
+              closestHit = Some(hit)
           }
         case None => ()
       }
-    })
+    )
 
     closestHit
   }

@@ -49,8 +49,6 @@ object Helpers {
     val g: Int = Math.round(rgb1.green * rgb2.green * constant).toInt
     val b: Int = Math.round(rgb1.blue * rgb2.blue * constant).toInt
 
-    val res = new RGBColor(r, g, b)
-    println(s"Multiplying $col1 and $col2 makes $res")
-    res
+    new RGBColor(r, g, b)
   }
 }

@@ -10,18 +10,10 @@ object Renderer {
 
   def renderSettings: RenderSettings = RenderSettings(400, 300)
 
-  def render(scene: Scene): ImmutableImage = {
-    val focalLength = 10
-    var nextId = 0
-
+  def render(scene: Scene, camera: Camera): ImmutableImage = {
     val pixels: Array[Pixel] = 0.until(renderSettings.height).toArray.flatMap(y => {
       0.until(renderSettings.width).toArray.map(x => {
-        val origin = DenseVector[Double](0, 0, 0)
-        val dir = normalize(DenseVector[Double](x, y, focalLength))
-        val ray = Ray(nextId, origin, dir, 0)
-        nextId += 1
-
-        val color = scene.trace(ray)
+        val color = scene.trace(camera.spawnRay(x, y))
         color.toPixel(x, y)
       })
     })
