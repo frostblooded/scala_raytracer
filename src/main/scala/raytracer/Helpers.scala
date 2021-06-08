@@ -21,7 +21,7 @@ object Helpers {
   }
 
   def randomDouble: Double = {
-    Random.nextInt / (Int.MaxValue + 1)
+    Random.nextInt.toDouble / (Int.MaxValue + 1)
   }
 
   def randomDouble(min: Double, max: Double): Double = {

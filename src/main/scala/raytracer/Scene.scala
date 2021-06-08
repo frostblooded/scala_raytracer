@@ -19,14 +19,23 @@ case class Scene(objects: List[SceneObject]) {
   }
 
   def intersect(ray: Ray): Option[HitInfo] = {
+    var closestHit: Option[HitInfo] = None
+    var closestT = Double.MaxValue
+
     objects.foreach(obj => {
       val hitInfo = obj.intersect(ray)
 
-      if(hitInfo.isDefined)
-        return hitInfo
+      hitInfo match {
+        case Some(info) =>
+          if(closestT > info.t) {
+            closestHit = Some(info)
+            closestT = info.t
+          }
+        case None => ()
+      }
     })
 
-    None
+    closestHit
   }
 }
 

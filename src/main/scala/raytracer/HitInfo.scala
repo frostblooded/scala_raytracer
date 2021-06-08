@@ -6,5 +6,6 @@ case class HitInfo(
   ray: Ray,
   obj: SceneObject,
   point: DenseVector[Double],
-  normal: DenseVector[Double]
+  normal: DenseVector[Double],
+  t: Double
 )
