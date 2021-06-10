@@ -1,7 +1,7 @@
 package raytracer
 
-import breeze.linalg.{DenseVector, cross, norm, normalize}
-import com.sksamuel.scrimage.color.{Color, X11Colorlist}
+import breeze.linalg.{cross, norm, normalize, DenseVector}
+import com.sksamuel.scrimage.color.Color
 import raytracer.Renderer.{Face, Vector3}
 
 case class SceneObject(
@@ -17,7 +17,7 @@ case class SceneObject(
   def shade(scene: Scene, hitInfo: HitInfo): Color = {
     val maxDepth = 4
 
-    if(hitInfo.ray.depth >= maxDepth) return material
+    if (hitInfo.ray.depth >= maxDepth) return material
 
     val r = Helpers.randomInUnitSphere
     val newRayDir = normalize(r + hitInfo.normal)
@@ -59,12 +59,12 @@ case class SceneObject(
     val N = cross(v0v1, v0v2)
 
     val NDotRayDirection = N dot dir
-    if(Math.abs(NDotRayDirection) < Float.MinPositiveValue)
+    if (Math.abs(NDotRayDirection) < Float.MinPositiveValue)
       return None
 
     val d = N dot v0
     val t = ((N dot orig) + d) / NDotRayDirection
-    if(t < 0) return None
+    if (t < 0) return None
 
     val P = orig + t * dir
 
@@ -74,7 +74,7 @@ case class SceneObject(
       cross(edge, vp)
     }
 
-    if((N dot C0) < 0) return None
+    if ((N dot C0) < 0) return None
 
     val C1 = {
       val edge = v2 - v1
@@ -82,7 +82,7 @@ case class SceneObject(
       cross(edge, vp)
     }
 
-    if((N dot C1) < 0) return None
+    if ((N dot C1) < 0) return None
 
     val C2 = {
       val edge = v0 - v2
@@ -90,7 +90,7 @@ case class SceneObject(
       cross(edge, vp)
     }
 
-    if((N dot C2) < 0) return None
+    if ((N dot C2) < 0) return None
 
     val area = norm(N) / 2
     val u = (norm(C0) / 2) / area

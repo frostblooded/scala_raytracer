@@ -1,6 +1,6 @@
 package raytracer
 
-import breeze.linalg.{DenseVector, normalize}
+import breeze.linalg.{normalize, DenseVector}
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.{RGBColor, X11Colorlist}
 import com.sksamuel.scrimage.pixels.Pixel
@@ -12,7 +12,7 @@ object Renderer {
   def renderSettings: RenderSettings = RenderSettings(400, 300)
 
   def pixelsAverage(pixels: List[Pixel]): Pixel = {
-    if(pixels.isEmpty) new Pixel(-1, -1, X11Colorlist.Purple.toARGBInt)
+    if (pixels.isEmpty) new Pixel(-1, -1, X11Colorlist.Purple.toARGBInt)
 
     // Xs and Ys of all of the pixels in the list should be the same
     val x = pixels.head.x
@@ -35,8 +35,7 @@ object Renderer {
     val samplesCount = 5
 
     val pixels: Array[List[Pixel]] = 0.until(renderSettings.height).toArray.flatMap(y => {
-      println(s"Col $y of ${renderSettings.height} done!")
-
+      // println(s"Col $y of ${renderSettings.height} done!")
       0.until(renderSettings.width).toArray.map(x => {
         0.until(samplesCount).map(i => {
           scene.trace(camera.spawnRay(x, y)).toPixel(x, y)

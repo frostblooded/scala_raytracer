@@ -3,6 +3,7 @@ package raytracer
 import breeze.linalg.DenseVector
 import com.sksamuel.scrimage.color.{RGBColor, X11Colorlist}
 import com.sksamuel.scrimage.nio.JpegWriter
+import raytracer.obj.ObjParser
 
 import java.io.File
 
@@ -40,10 +41,11 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    val scene = scene1
+    val obj = ObjParser.read("objs/1.obj")
 
+    val scene = scene1
     val camera = Camera(
-      16f/9,
+      16f / 9,
       400,
       2,
       1,
