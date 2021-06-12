@@ -11,4 +11,6 @@ libraryDependencies += "org.scalanlp" %% "breeze" % "1.1"
 libraryDependencies += "org.scalanlp" %% "breeze-natives" % "1.1"
 libraryDependencies += "org.scalanlp" %% "breeze-viz" % "1.1"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
+
 resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"

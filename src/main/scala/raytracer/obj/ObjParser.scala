@@ -9,11 +9,20 @@ import raytracer.Renderer.Face
 object ObjParser {
   def readObject(lines: BufferedIterator[String]): ObjObject = {
     val name = lines.next.split(" ")(1)
+    var verts = List.empty
+    var faces = List.empty
+
+    for(line <- lines) {
+      if(line.startsWith("o ")) {
+        return new Object()
+      }
+    }
+
     val elementsEnd = lines.indexWhere(_.startsWith("o "))
 
     val objectLines =
       if (elementsEnd == -1)
-        List.empty
+        lines
       else
         lines.take(elementsEnd)
 
@@ -32,21 +41,29 @@ object ObjParser {
     ObjObject(name, verts, faces)
   }
 
-  def read(filename: String): Obj = {
-    val source = Source.fromFile(filename)
-    val lines = source.getLines.buffered
+  def readFromIter(lines: BufferedIterator[String]): Obj = {
+    var objects: List[ObjObject] = List.empty
 
     while (lines.nonEmpty) {
       val line = lines.head
 
       if (line.startsWith("o ")) {
-        readObject(lines)
+        objects = readObject(lines) +: objects
       } else {
         lines.next
       }
     }
 
+    Obj(objects)
+  }
+
+  def read(filename: String): Obj = {
+    val source = Source.fromFile(filename)
+    val lines = source.getLines.buffered
+
+    val obj = readFromIter(lines)
+
     source.close
-    new Obj()
+    obj
   }
 }

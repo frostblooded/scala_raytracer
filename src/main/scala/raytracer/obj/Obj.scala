@@ -1,5 +1,5 @@
 package raytracer.obj
 
-class Obj {
+case class Obj(objects: List[ObjObject]) {
 
 }
